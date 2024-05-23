@@ -1,0 +1,1 @@
+verilator,522bead374d6b7b2adb316304126e5361b18bcf1,https://github.com/verilator/verilator.git
