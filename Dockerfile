@@ -44,4 +44,4 @@ COPY install.sh /install.sh
 COPY libraries.txt /libraries.txt
 RUN chmod +x /install.sh && ./install.sh
 
-ENTRYPOINT ["/bin/bash", "-c"]
+ENTRYPOINT [ "/bin/bash" ]

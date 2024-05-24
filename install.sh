@@ -10,7 +10,7 @@ PARAM_FILE="libraries.txt"
 
 while IFS=, read -r name reference repo_url; do
   echo "Cloning $name at reference $reference from $repo_url"
-  git clone "$repo_url $name"
+  git clone "$repo_url"
   cd "$name"
   git checkout -q "$reference"
   cd ..
@@ -30,3 +30,5 @@ if [ "$DOCKER_BUILD" = true ]; then
   echo "Removing repositories"
   rm -r verilator
 fi
+
+echo "Done"
