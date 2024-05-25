@@ -1,10 +1,30 @@
 FROM ubuntu:24.04
 
-LABEL Name=coresim-docker Version=0.0.1
+LABEL Name=coresim Version=0.0.1
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive \
     && apt-get install --no-install-recommends -y \
+        # riscv-gnu-toolchain (without packages already used for verilator/general packages)
+        automake \
+        autotools-dev \
+        curl \
+        python3 \
+        python3-pip \
+        libmpc-dev \
+        libmpfr-dev \
+        libgmp-dev \
+        gawk \
+        build-essential \
+        texinfo \
+        gperf \
+        libtool \
+        patchutils \
+        bc \
+        libexpat-dev \
+        ninja-build \
+        libglib2.0-dev \
+        libslirp-dev \
         # Verilator
         autoconf \
         bc \

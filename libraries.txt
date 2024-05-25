@@ -1,1 +1,2 @@
 verilator,8e2ba6a00382075387b32fbbf8f5f85fec482d9a,https://github.com/verilator/verilator.git
+riscv-gnu-toolchain,f133b299b95065aaaf040e18b578fea6bbef532e,https://github.com/riscv-collab/riscv-gnu-toolchain.git
