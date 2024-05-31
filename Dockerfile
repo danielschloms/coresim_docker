@@ -56,6 +56,11 @@ RUN apt-get update \
         g++ \
         g++-multilib \
         llvm-18 \
+        clang-18 \
+        # Needed by clang-18
+        lld \
+        # Needed by Vicuna
+        srecord \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
