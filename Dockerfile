@@ -55,7 +55,7 @@ RUN apt-get update \
         gcc-multilib \
         g++ \
         g++-multilib \
-        llvm-17 \
+        llvm-18 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
