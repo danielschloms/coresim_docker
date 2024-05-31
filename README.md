@@ -1,1 +1,1 @@
-# master_coresim_docker
+# CoreSim Docker Container

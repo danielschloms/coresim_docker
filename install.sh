@@ -46,7 +46,7 @@ cd ..
 if [ "$DOCKER_BUILD" = true ]; then
   echo "Removing repositories"
   rm -r verilator
-  rm -r risv-gnu-toolchain
+  rm -r riscv-gnu-toolchain
 fi
 
 echo "Done"
