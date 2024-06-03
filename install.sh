@@ -16,7 +16,20 @@ while IFS=, read -r name reference repo_url; do
   cd ..
 done < "$PARAM_FILE"
 
-# Install verilator
+# Install ETISS
+# Ref: bd49a5beb2d01a31b2e7fe2ea8ba594a8c1d8835 
+# -> Latest master commit, 06.03.2024
+cd etiss
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/etiss
+make -j4
+make install
+cd ..
+
+# Install Verilator
+# Ref: 522bead374d6b7b2adb316304126e5361b18bcf1 
+# -> v5.024
 cd verilator
 autoconf
 ./configure --prefix /opt/verilator
@@ -25,7 +38,9 @@ sudo make install
 echo 'export PATH=/opt/verilator/bin:$PATH' | sudo tee -a /etc/profile
 cd ..
 
-# Install RISCV GCC
+# Install RISC-V GNU Toolchain
+# Ref: f133b299b95065aaaf040e18b578fea6bbef532e
+# -> Nightly: April 12, 2024
 install_riscv_gcc(){
   if [[ $# -ne 2 ]]; then
     echo "Error: RISCV GCC needs architecture and ABI"
@@ -45,6 +60,7 @@ cd ..
 # Remove cloned repositories to save space in docker image
 if [ "$DOCKER_BUILD" = true ]; then
   echo "Removing repositories"
+  rm -r etiss
   rm -r verilator
   rm -r riscv-gnu-toolchain
 fi
