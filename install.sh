@@ -6,63 +6,48 @@ else
     DOCKER_BUILD=false
 fi
 
-PARAM_FILE="libraries.txt"
+# Repos
+git clone https://github.com/PhilippvK/etiss --branch rvv-2024
+git clone https://github.com/PhilippvK/etiss_arch_riscv --branch rvv-2024 --recursive
+git clone https://github.com/tum-ei-eda/etiss_riscv_tests.git --branch rvv-2024
+git clone https://github.com/PhilippvK/M2-ISA-R --branch rvv-2024
+git clone https://github.com/PhilippvK/riscv-tests --branch rvv_tests --recursive
+git clone https://github.com/tum-ei-eda/softvector --branch rvv1.0
+git clone https://github.com/PhilippvK/rvv-cdsl2-gen --branch main
 
-while IFS=, read -r name reference repo_url; do
-  echo "Cloning $name at reference $reference from $repo_url"
-  git clone "$repo_url"
-  cd "$name"
-  git checkout -q "$reference"
-  cd ..
-done < "$PARAM_FILE"
+# Setup venv
+virtualenv -p python3.8 venv
+source venv/bin/activate
+pip install -r etiss_riscv_tests/requirements.txt
+pip install -r rvv-cdsl2-gen/requirements.txt
 
-# Install ETISS
-# Ref: bd49a5beb2d01a31b2e7fe2ea8ba594a8c1d8835 
-# -> Latest master commit, 06.03.2024
-cd etiss
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/etiss
-make -j4
+# Setup M2-ISA-R
+pip install -e M2-ISA-R
+
+# Setup ETISS
+mkdir -p etiss/build
+cd etiss/build
+cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/install/ -DCMAKE_BUILD_TYPE=Debug ..
+make -j$(nproc)
 make install
-cd ..
+cd -
 
-# Install Verilator
-# Ref: 522bead374d6b7b2adb316304126e5361b18bcf1 
-# -> v5.024
-cd verilator
+# Download RISC-V Toolchain
+mkdir -p gnu
+cd gnu
+wget https://syncandshare.lrz.de/dl/fiWBtDLWz17RBc1Yd4VDW7/GCC/default/2023.11.27/Ubuntu/20.04/rv32gcv_ilp32d.tar.xz
+tar xvf rv32gcv_ilp32d.tar.xz
+rm rv32gcv_ilp32d.tar.xz
+cd -
+# Do not forget to export these in every terminal session!
+export RISCV=$(pwd)/gnu
+export PATH=$RISCV/bin:$PATH
+
+# Setup RISC-V Tests
+cd riscv-tests
 autoconf
-./configure --prefix /opt/verilator
-make
-sudo make install
-echo 'export PATH=/opt/verilator/bin:$PATH' | sudo tee -a /etc/profile
-cd ..
-
-# Install RISC-V GNU Toolchain
-# Ref: f133b299b95065aaaf040e18b578fea6bbef532e
-# -> Nightly: April 12, 2024
-install_riscv_gcc(){
-  if [[ $# -ne 2 ]]; then
-    echo "Error: RISCV GCC needs architecture and ABI"
-    exit 1
-  fi
-  echo "Arch: $1, ABI: $2"
-  ./configure --prefix=/opt/riscv-gnu-toolchain/$1 --with-arch=$1 --with-abi=$2
-  make
-}
-cd riscv-gnu-toolchain
-  install_riscv_gcc rv32im ilp32
-  install_riscv_gcc rv32imf ilp32f
-  install_riscv_gcc rv32imzve32x ilp32
-  install_riscv_gcc rv32imfzve32x ilp32f
-cd ..
-
-# Remove cloned repositories to save space in docker image
-if [ "$DOCKER_BUILD" = true ]; then
-  echo "Removing repositories"
-  rm -r etiss
-  rm -r verilator
-  rm -r riscv-gnu-toolchain
-fi
+./configure --prefix=$RISCV/target
+make -j1 -C isa XLEN=32
+cd -
 
 echo "Done"

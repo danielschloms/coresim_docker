@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 
-LABEL Name=coresim Version=0.0.1
+LABEL Name=etiss Version=0.0.1
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive
 
@@ -87,8 +87,8 @@ RUN apt-get install --no-install-recommends -y \
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install libraries
-COPY install.sh /install.sh
-COPY libraries.txt /libraries.txt
-RUN chmod +x /install.sh && ./install.sh
+# COPY install.sh /install.sh
+# COPY libraries.txt /libraries.txt
+# RUN chmod +x /install.sh && ./install.sh
 
 ENTRYPOINT [ "/bin/bash" ]
