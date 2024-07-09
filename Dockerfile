@@ -1,8 +1,10 @@
-FROM ubuntu:24.04
+FROM ubuntu:20.04
 
-LABEL Name=etiss Version=0.0.1
+LABEL Name=etiss-20-04 Version=0.0.1
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update
 
 # ETISS
 RUN apt-get install --no-install-recommends -y \
@@ -79,8 +81,8 @@ RUN apt-get install --no-install-recommends -y \
     gcc-multilib \
     g++ \
     g++-multilib \
-    llvm-18 \
-    clang-18 \
+    llvm-11 \
+    clang-11 \
     # Needed by clang-18
     lld \
     # Needed by Vicuna
@@ -88,9 +90,8 @@ RUN apt-get install --no-install-recommends -y \
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install libraries
-# COPY install.sh /install.sh
-# COPY libraries.txt /libraries.txt
-# RUN chmod +x /install.sh && ./install.sh
+RUN echo "export RISCV=/workspaces/etiss_workspace/gnu" >> /root/.bashrc
+RUN echo "export PATH=$RISCV/bin:$PATH" >> /root/.bashrc
+RUN echo "export WS_PATH=/workspaces/etiss_workspace" >> /root/.bashrc
 
 ENTRYPOINT [ "/bin/bash" ]
