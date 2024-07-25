@@ -76,6 +76,7 @@ RUN apt-get install --no-install-recommends -y \
     cmake \
     python3-venv \
     doxygen \
+    gdb \
     # Compilers
     gcc \
     gcc-multilib \
