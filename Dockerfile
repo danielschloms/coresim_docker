@@ -91,7 +91,8 @@ RUN apt-get install --no-install-recommends -y \
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN echo "export RISCV=/workspaces/etiss_workspace/gnu" >> /root/.bashrc
-RUN echo "export PATH=$RISCV/bin:$PATH" >> /root/.bashrc
+RUN echo 'export PATH=$RISCV/bin:$PATH' >> /root/.bashrc
 RUN echo "export WS_PATH=/workspaces/etiss_workspace" >> /root/.bashrc
+RUN echo "alias cdd='cd $WS_PATH'"
 
 ENTRYPOINT [ "/bin/bash" ]
