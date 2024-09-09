@@ -2,6 +2,8 @@ FROM ubuntu:20.04
 
 LABEL Name=etiss-20-04 Version=0.0.1
 
+ARG REMOTE_USER
+
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y apt-transport-https
@@ -69,6 +71,7 @@ RUN apt-get install --no-install-recommends -y \
 # Other packages
 RUN apt-get install --no-install-recommends -y \
     # General packages
+    ssh \
     sudo \
     wget \
     vim \
@@ -96,5 +99,14 @@ RUN echo 'export PATH=$RISCV/bin:$PATH' >> /root/.bashrc
 RUN echo "export WS_PATH=/workspaces/etiss_workspace" >> /root/.bashrc
 RUN echo 'export HOME=$WS_PATH' >> /root/.bashrc
 RUN echo 'cd $HOME' >> /root/.bashrc
+
+COPY setup.sh /setup.sh
+RUN chmod +x /setup.sh && /setup.sh ${REMOTE_USER} 1000 1000
+
+RUN echo "export RISCV=/workspaces/etiss_workspace/gnu" >> /home/${REMOTE_USER}/.bashrc
+RUN echo 'export PATH=$RISCV/bin:$PATH' >> /home/${REMOTE_USER}/.bashrc
+RUN echo "export WS_PATH=/workspaces/etiss_workspace" >> /home/${REMOTE_USER}/.bashrc
+RUN echo 'export HOME=$WS_PATH' >> /home/${REMOTE_USER}/.bashrc
+RUN echo 'cd $HOME' >> /home/${REMOTE_USER}/.bashrc
 
 ENTRYPOINT [ "/bin/bash" ]
