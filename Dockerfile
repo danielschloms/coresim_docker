@@ -6,7 +6,8 @@ ARG REMOTE_USER
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y apt-transport-https
+RUN apt-get update 
+# && apt-get install -y apt-transport-https
 
 # ETISS
 RUN apt-get install --no-install-recommends -y \
@@ -92,21 +93,36 @@ RUN apt-get install --no-install-recommends -y \
     # Needed by Vicuna
     srecord
 
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+ARG USERNAME=USERNAME
+ARG USER_UID=1000
+ARG USER_GID=1000
 
-RUN echo "export RISCV=/workspaces/etiss_workspace/gnu" >> /root/.bashrc
-RUN echo 'export PATH=$RISCV/bin:$PATH' >> /root/.bashrc
-RUN echo "export WS_PATH=/workspaces/etiss_workspace" >> /root/.bashrc
-RUN echo 'export HOME=$WS_PATH' >> /root/.bashrc
-RUN echo 'cd $HOME' >> /root/.bashrc
+# Delete user if he exists
+RUN if id -u $USER_UID ; then userdel `id -un $USER_UID` ; fi
 
-COPY setup.sh /setup.sh
-RUN chmod +x /setup.sh && /setup.sh ${REMOTE_USER} 1000 1000
+# Create the user
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+RUN mkdir /home/$USERNAME/projects \
+    && chown -R $USERNAME:$USERNAME /home/$USERNAME/projects 
+RUN apt-get update && apt-get upgrade -y
+ENV SHELL=/bin/bash
 
-RUN echo "export RISCV=/workspaces/etiss_workspace/gnu" >> /home/${REMOTE_USER}/.bashrc
-RUN echo 'export PATH=$RISCV/bin:$PATH' >> /home/${REMOTE_USER}/.bashrc
-RUN echo "export WS_PATH=/workspaces/etiss_workspace" >> /home/${REMOTE_USER}/.bashrc
-RUN echo 'export HOME=$WS_PATH' >> /home/${REMOTE_USER}/.bashrc
-RUN echo 'cd $HOME' >> /home/${REMOTE_USER}/.bashrc
+# [Optional] Set the default user. Omit if you want to keep the default as root.
+USER $USERNAME
 
-ENTRYPOINT [ "/bin/bash" ]
+# Enable mouse in tmux, escape time to 0 (vim/nvim)
+RUN echo 'set -g mouse on' >> ~/.tmux.conf
+RUN echo 'set -s escape-time 0' >> ~/.tmux.conf
+
+# Export workspace path
+RUN echo 'export WS_PATH=${HOME}/etiss_workspace' >> ~/.bashrc
+RUN echo "export RISCV=${HOME}/etiss_workspace/gnu" >> /home/${USERNAME}/.bashrc
+RUN echo 'export PATH=$RISCV/bin:$PATH' >> /home/${USERNAME}/.bashrc
+
+# Change bash color in container
+RUN echo 'export PS1="\[\e[32m\][\[\e[m\]\[\e[31m\]\u\[\e[m\]\[\e[33m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]:\[\e[36m\]\w\[\e[m\]\[\e[32m\]]\[\e[m\]\[\e[32;35m\]\\$\[\e[m\] "' >> ~/.bashrc
+CMD ["/bin/bash"]
