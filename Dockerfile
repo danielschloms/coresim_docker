@@ -81,6 +81,7 @@ RUN apt-get install --no-install-recommends -y \
     python3-venv \
     doxygen \
     gdb \
+    bash-completion \
     # Compilers
     gcc \
     gcc-multilib \

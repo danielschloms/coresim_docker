@@ -1,3 +1,0 @@
-verilator,8e2ba6a00382075387b32fbbf8f5f85fec482d9a,https://github.com/verilator/verilator.git
-etiss,bd49a5beb2d01a31b2e7fe2ea8ba594a8c1d8835,https://github.com/tum-ei-eda/etiss.git
-riscv-gnu-toolchain,f133b299b95065aaaf040e18b578fea6bbef532e,https://github.com/riscv-collab/riscv-gnu-toolchain.git
