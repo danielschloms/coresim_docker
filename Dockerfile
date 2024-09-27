@@ -107,8 +107,8 @@ RUN groupadd --gid $USER_GID $USERNAME \
     # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
-RUN mkdir /home/$USERNAME/projects \
-    && chown -R $USERNAME:$USERNAME /home/$USERNAME/projects 
+RUN mkdir /home/$USERNAME \
+    && chown -R $USERNAME:$USERNAME /home/$USERNAME 
 RUN apt-get update && apt-get upgrade -y
 ENV SHELL=/bin/bash
 
