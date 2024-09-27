@@ -82,6 +82,7 @@ RUN apt-get install --no-install-recommends -y \
     doxygen \
     gdb \
     bash-completion \
+    clang-format \
     # Compilers
     gcc \
     gcc-multilib \
