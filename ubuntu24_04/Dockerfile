@@ -1,21 +1,21 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
-LABEL Name=etiss-20-04 Version=0.0.1
+LABEL Name=perfsim-24-04 Version=0.0.1
 
 ARG REMOTE_USER
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get upgrade
+RUN apt-get update && apt-get upgrade -y
 # && apt-get install -y apt-transport-https
 
 # add-apt-repository
 RUN apt-get install -y software-properties-common
 
 # Go (ChipsAlliance riscv-vector-tests)
-RUN add-apt-repository ppa:longsleep/golang-backports
-RUN apt-get update
-RUN apt-get install --no-install-recommends -y golang-go 
+# RUN add-apt-repository ppa:longsleep/golang-backports
+# RUN apt-get update
+# RUN apt-get install --no-install-recommends -y golang-go 
 
 # ETISS
 RUN apt-get install --no-install-recommends -y \
@@ -32,32 +32,10 @@ RUN apt-get install --no-install-recommends -y \
     libboost-regex-dev \
     libboost-system-dev
 
-# Verilator
-# RUN apt-get install --no-install-recommends -y \
-#     autoconf \
-#     bc \
-#     bison \
-#     build-essential \
-#     ca-certificates \
-#     ccache \
-#     flex \
-#     git \
-#     g++ \
-#     help2man \
-#     libfl2 \
-#     libfl-dev \
-#     libgoogle-perftools-dev \
-#     make \
-#     numactl \
-#     perl \
-#     perl-doc \
-#     python3 \
-#     zlib1g \
-#     zlib1g-dev 
-
 # RISC-V GNU Toolchain
 RUN apt-get install --no-install-recommends -y \
     autoconf \
+    apt-utils \
     automake \
     autotools-dev \
     curl \
@@ -101,13 +79,7 @@ RUN apt-get install --no-install-recommends -y \
     gcc \
     gcc-multilib \
     g++ \
-    g++-multilib \
-    llvm-11 \
-    clang-11 \
-    # Needed by clang-18
-    lld \
-    # Needed by Vicuna
-    srecord
+    g++-multilib 
 
 ARG USERNAME=USERNAME
 ARG USER_UID=1000
@@ -134,15 +106,16 @@ RUN echo 'set -g mouse on' >> ~/.tmux.conf
 RUN echo 'set -s escape-time 0' >> ~/.tmux.conf
 
 # Export workspace paths
-RUN echo 'export WS_PATH=$HOME/etiss_workspace' >> ~/.bashrc
-RUN echo "export RISCV=$HOME/etiss_workspace/gnu" >> /home/${USERNAME}/.bashrc
+RUN echo 'export WS_PATH=$HOME/perfsim_workspace' >> ~/.bashrc
+RUN echo "export RISCV=$HOME/perfsim_workspace/gnu64" >> /home/${USERNAME}/.bashrc
 RUN echo 'export PATH=$RISCV/bin:$PATH' >> /home/${USERNAME}/.bashrc
-RUN echo 'export VENV_NAME=venv' >> /home/${USERNAME}/.bashrc
+RUN echo 'export VENV_NAME=venv64' >> /home/${USERNAME}/.bashrc
 RUN echo 'export VENV_PATH=$WS_PATH/$VENV_NAME' >> /home/${USERNAME}/.bashrc
-
 
 # Add script directory to PATH
 RUN echo export 'PATH=$WS_PATH/ws_scripts:$PATH' >> /home/${USERNAME}/.bashrc
+
+RUN echo 'alias odmp="riscv64-unknown-elf-objdump --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.text.init --section=.data"'
 
 # Change bash color in container
 RUN echo 'export PS1="\[\e[32m\][\[\e[m\]\[\e[31m\]\u\[\e[m\]\[\e[33m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]:\[\e[36m\]\w\[\e[m\]\[\e[32m\]]\[\e[m\]\[\e[32;35m\]\\$\[\e[m\] "' >> ~/.bashrc

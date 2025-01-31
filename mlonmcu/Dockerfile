@@ -1,6 +1,6 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
-LABEL Name=etiss-20-04 Version=0.0.1
+LABEL Name=mlonmcu Version=0.0.1
 
 ARG REMOTE_USER
 
@@ -31,6 +31,11 @@ RUN apt-get install --no-install-recommends -y \
     device-tree-compiler \
     libboost-regex-dev \
     libboost-system-dev
+
+# MLONMCU
+RUN apt-get install --no-install-recommends -y \
+    unzip \
+    libzstd-dev
 
 # Verilator
 # RUN apt-get install --no-install-recommends -y \
@@ -102,8 +107,6 @@ RUN apt-get install --no-install-recommends -y \
     gcc-multilib \
     g++ \
     g++-multilib \
-    llvm-11 \
-    clang-11 \
     # Needed by clang-18
     lld \
     # Needed by Vicuna
@@ -134,12 +137,10 @@ RUN echo 'set -g mouse on' >> ~/.tmux.conf
 RUN echo 'set -s escape-time 0' >> ~/.tmux.conf
 
 # Export workspace paths
-RUN echo 'export WS_PATH=$HOME/etiss_workspace' >> ~/.bashrc
-RUN echo "export RISCV=$HOME/etiss_workspace/gnu" >> /home/${USERNAME}/.bashrc
-RUN echo 'export PATH=$RISCV/bin:$PATH' >> /home/${USERNAME}/.bashrc
-RUN echo 'export VENV_NAME=venv' >> /home/${USERNAME}/.bashrc
-RUN echo 'export VENV_PATH=$WS_PATH/$VENV_NAME' >> /home/${USERNAME}/.bashrc
-
+RUN echo 'export WS_PATH=$HOME/benchmark_workspace' >> ~/.bashrc
+# RUN echo "export RISCV=$HOME/benchmark_ws/gnu" >> /home/${USERNAME}/.bashrc
+# RUN echo 'export PATH=$RISCV/bin:$PATH' >> /home/${USERNAME}/.bashrc
+RUN echo 'export MLONMCU_HOME=$WS_PATH/mlonmcu/workspace_rvv/' >> ~/.bashrc
 
 # Add script directory to PATH
 RUN echo export 'PATH=$WS_PATH/ws_scripts:$PATH' >> /home/${USERNAME}/.bashrc
