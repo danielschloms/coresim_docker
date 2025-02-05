@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 
-LABEL Name=perfsim-24-04 Version=0.0.1
+LABEL Name=etiss-24-04 Version=0.0.1
 
 ARG REMOTE_USER
 

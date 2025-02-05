@@ -1,12 +1,12 @@
 FROM ubuntu:22.04
 
-LABEL Name=mlonmcu Version=0.0.1
+LABEL Name=mlonmcu-22-04 Version=0.0.1
 
 ARG REMOTE_USER
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get upgrade
+RUN apt-get update && apt-get upgrade -y
 # && apt-get install -y apt-transport-https
 
 # add-apt-repository
