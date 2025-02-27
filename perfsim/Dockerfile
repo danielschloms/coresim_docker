@@ -64,6 +64,8 @@ RUN apt-get install --no-install-recommends -y \
 # Other packages
 RUN apt-get install --no-install-recommends -y \
     # General packages
+    tmux \
+    tmuxinator \
     ssh \
     sudo \
     wget \
@@ -106,9 +108,18 @@ RUN echo 'set -g mouse on' >> ~/.tmux.conf
 RUN echo 'set -s escape-time 0' >> ~/.tmux.conf
 
 # Export workspace paths
-RUN echo 'export WS_PATH=$HOME/perfsim' >> ~/.bashrc
-RUN echo "export RISCV=$HOME/perfsim/gnu64" >> /home/${USERNAME}/.bashrc
+RUN echo 'export WS_PATH=$HOME/perfsim_workspace' >> ~/.bashrc
+RUN echo "export RISCV=$WS_PATH/gnu64" >> /home/${USERNAME}/.bashrc
 RUN echo 'export PATH=$RISCV/bin:$PATH' >> /home/${USERNAME}/.bashrc
+
+RUN echo 'export MARCH_32=rv32gcv' >> ~/.bashrc
+RUN echo 'export MABI_32=ilp32f' >> ~/.bashrc
+RUN echo 'export MARCH_64=rv64gcv' >> ~/.bashrc
+RUN echo 'export MABI_64=lp64d' >> ~/.bashrc
+RUN echo 'export LINK=$WS_PATH/perfsim_ws/target_sw/examples/cv32e40xv/link.ld' >> ~/.bashrc
+RUN echo 'export ETISS_BIN=$WS_PATH/perfsim_ws/etiss-perf-sim/etiss/build_dir/bin/bare_etiss_processor' >> ~/.bashrc
+RUN echo 'alias v32gcc="riscv32-unknown-elf-gcc -Og -g -static -DVLEN=1024 -march=$MARCH_32 -mabi=$MABI_32"' >> ~/.bashrc
+RUN echo 'alias v64gcc="riscv64-unknown-elf-gcc -march=$MARCH_64 -mabi=$MABI_64"' >> ~/.bashrc
 
 # Add script directory to PATH
 # RUN echo export 'PATH=$WS_PATH/ws_scripts:$PATH' >> /home/${USERNAME}/.bashrc
