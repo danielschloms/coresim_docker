@@ -17,6 +17,30 @@ RUN apt-get install -y software-properties-common
 # RUN apt-get update
 # RUN apt-get install --no-install-recommends -y golang-go perfsim
 
+# Verilator
+RUN apt-get update
+RUN apt-get install --no-install-recommends -y \
+    autoconf \
+    bc \
+    bison \
+    build-essential \
+    ca-certificates \
+    ccache \
+    flex \
+    git \
+    g++ \
+    help2man \
+    libfl2 \
+    libfl-dev \
+    libgoogle-perftools-dev \
+    make \
+    numactl \
+    perl \
+    perl-doc \
+    python3 \
+    zlib1g \
+    zlib1g-dev 
+
 # ETISS
 RUN apt-get install --no-install-recommends -y \
     build-essential \
@@ -111,14 +135,14 @@ RUN echo 'set -s escape-time 0' >> ~/.tmux.conf
 # Export workspace paths
 # RUN echo 'export WS_PATH=$HOME/perfsim_workspace' >> ~/.bashrc
 RUN printf 'if [ -n "$WS_PATH" ]; then\n\
-\texport RISCV=$WS_PATH/toolchain/riscv-gnu-gen-mlib\n\
+\texport TOOLCHAIN_PATH=$WS_PATH/toolchain\n\
+\texport RISCV=$TOOLCHAIN_PATH/riscv-gnu-gen-mlib\n\
 \texport PATH=$RISCV/bin:$PATH\n\
+\texport PATH=$TOOLCHAIN_PATH/verilator/bin:$PATH\n\
 else\n\
 \techo "[33mWarning, WS_PATH not set![m"\n\
 \techo "[33m-> RISCV not set![m"\n\
 fi\n' >> /home/${USERNAME}/.bashrc
-RUN echo 'export RISCV=$WS_PATH/toolchain/riscv-gnu-gen-mlib' >> /home/${USERNAME}/.bashrc
-RUN echo 'export PATH=$RISCV/bin:$PATH' >> /home/${USERNAME}/.bashrc
 
 # RUN echo 'export MARCH_32=rv32gcv' >> ~/.bashrc
 # RUN echo 'export MABI_32=ilp32f' >> ~/.bashrc
