@@ -83,7 +83,8 @@ RUN apt-get install --no-install-recommends -y \
     git \
     cmake \
     libglib2.0-dev \
-    libslirp-dev
+    libslirp-dev \
+    srecord
 
 # Other packages
 RUN apt-get update
