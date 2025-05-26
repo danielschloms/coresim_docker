@@ -107,7 +107,9 @@ RUN apt-get install -y --no-install-recommends\
     gcc \
     gcc-multilib \
     g++ \
-    g++-multilib 
+    g++-multilib \
+    # M2-ISA-R-Perf doc generation
+    graphviz
 
 ARG USERNAME=USERNAME
 ARG USER_UID=1000
